@@ -32,10 +32,10 @@ const PaidLesson = lazy(() => import("@/pages/PaidLesson"));
 const ExamResults = lazy(() => import("@/pages/ExamResults"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 
-const DashboardHome = lazy(() => import("@/pages/DashboardHome"));
 const DashExams = lazy(() => import("@/pages/dashboard/dashExams"));
 const DashLessons = lazy(() => import("@/pages/dashboard/dashLessons"));
 const DashStudents = lazy(() => import("@/pages/dashboard/dashStudents"));
+const DashboardHome = lazy(() => import("@/pages/dashboard/DashboardHome"));
 const DashQuestions = lazy(() => import("@/pages/dashboard/dashQuestions"));
 
 const Unauthorized = lazy(() => import("@/pages/Unauthorized"));

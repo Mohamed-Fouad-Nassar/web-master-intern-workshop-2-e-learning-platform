@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/select";
 import { useQuestions } from "@/hooks/admin/questions/useQuestions";
 import { useExams } from "@/hooks/admin/exams/useExams";
-import AddQuestionForm from "@/features/admin/AddQuestionForm";
+import AddQuestionForm from "@/features/admin/questions/AddQuestionForm";
 import UpdateQuestionForm from "@/features/admin/UpdateQuestionForm";
 import ViewQuestionDetails from "@/features/admin/ViewQuestionDetails";
 
@@ -46,7 +46,9 @@ export default function DashQuestions() {
     return matchExam && matchType;
   });
 
-  const uniqueExams = [...new Set(questionsWithTitles.map((q) => q.exam?.title))];
+  const uniqueExams = [
+    ...new Set(questionsWithTitles.map((q) => q.exam?.title)),
+  ];
   const uniqueTypes = [...new Set(questionsWithTitles.map((q) => q.type))];
 
   const handleShow = (q) => setViewingQuestion(q);
@@ -144,7 +146,10 @@ export default function DashQuestions() {
             >
               <X />
             </button>
-            <AddQuestionForm exams={exams || []} onSubmit={handleQuestionSubmit} />
+            <AddQuestionForm
+              exams={exams || []}
+              onSubmit={handleQuestionSubmit}
+            />
           </div>
         </div>
       )}

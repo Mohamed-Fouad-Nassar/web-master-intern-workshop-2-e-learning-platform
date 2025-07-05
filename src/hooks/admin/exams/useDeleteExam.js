@@ -13,7 +13,7 @@ export function useDeleteExam() {
       }
       return response;
     },
-    onSuccess: (_, examId) => {
+    onSuccess: () => {
       toast.success("Exam deleted successfully ✅");
       queryClient.invalidateQueries(["exams"]);
     },

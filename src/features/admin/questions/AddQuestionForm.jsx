@@ -1,12 +1,7 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { questionSchema } from "@/validations/QuestionSchema";
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectTrigger,
@@ -14,10 +9,16 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import LoadingButton from "@/components/LoadingButton";
 
 import { useAddQuestion } from "@/hooks/admin/questions/useAddQuestion";
 
-export default function AddQuestionForm({ exams = [], onSuccess }) {
+import { questionSchema } from "@/validations/QuestionSchema";
+
+export default function AddQuestionForm({ exams = [] }) {
   const {
     register,
     handleSubmit,
@@ -39,7 +40,7 @@ export default function AddQuestionForm({ exams = [], onSuccess }) {
   });
 
   const watchType = watch("type");
-  const { mutate: addQuestion, isPending } = useAddQuestion();
+  const { mutate: addQuestion, isPending: isLoading } = useAddQuestion();
 
   // ✅ تحديث الخيارات تلقائيًا عند تغيير النوع
   useEffect(() => {
@@ -58,23 +59,19 @@ export default function AddQuestionForm({ exams = [], onSuccess }) {
     updated[index] = value;
     setValue("options", updated);
   };
-const onSubmitForm = (data) => {
-  if (data.type === "true-false") {
-    data.options = ["True", "False"];
-  } else if (data.type === "short-answer") {
-    delete data.options; // نحذفها نهائيًا
-  }
+  const onSubmitForm = (data) => {
+    if (data.type === "true-false") {
+      data.options = ["True", "False"];
+    } else if (data.type === "short-answer") {
+      delete data.options; // نحذفها نهائيًا
+    }
 
-  console.log("✅ Submitting question:", data);
+    console.log("✅ Submitting question:", data);
 
-  addQuestion(data, {
-    onSuccess: () => {
-      reset();
-      onSuccess?.();
-    },
-  });
-};
-
+    addQuestion(data, {
+      onSuccess: () => reset(),
+    });
+  };
 
   const onSubmitError = (errors) => {
     console.log("❌ Validation Errors:", errors);
@@ -83,15 +80,15 @@ const onSubmitForm = (data) => {
   return (
     <form
       onSubmit={handleSubmit(onSubmitForm, onSubmitError)}
-      className="space-y-6 bg-white dark:bg-[#1f2937] text-gray-900 dark:text-gray-100 p-6 rounded-xl shadow-md border border-border dark:border-gray-700 max-w-2xl mx-auto"
+      className="space-y-4"
     >
-      <h2 className="text-xl font-semibold mb-4">Add New Question</h2>
-
       {/* Question Text */}
       <div className="space-y-2">
         <Label>Question Text</Label>
         <Textarea {...register("text")} placeholder="Enter the question" />
-        {errors.text && <p className="text-red-500 text-sm">{errors.text.message}</p>}
+        {errors.text && (
+          <p className="text-red-500 text-sm">{errors.text.message}</p>
+        )}
       </div>
 
       {/* Type */}
@@ -113,7 +110,9 @@ const onSubmitForm = (data) => {
             </Select>
           )}
         />
-        {errors.type && <p className="text-red-500 text-sm">{errors.type.message}</p>}
+        {errors.type && (
+          <p className="text-red-500 text-sm">{errors.type.message}</p>
+        )}
       </div>
 
       {/* Options */}
@@ -128,7 +127,9 @@ const onSubmitForm = (data) => {
               onChange={(e) => handleOptionChange(idx, e.target.value)}
             />
           ))}
-          {errors.options && <p className="text-red-500 text-sm">{errors.options.message}</p>}
+          {errors.options && (
+            <p className="text-red-500 text-sm">{errors.options.message}</p>
+          )}
         </div>
       )}
 
@@ -183,19 +184,23 @@ const onSubmitForm = (data) => {
             </Select>
           )}
         />
-        {errors.exam && <p className="text-red-500 text-sm">{errors.exam.message}</p>}
+        {errors.exam && (
+          <p className="text-red-500 text-sm">{errors.exam.message}</p>
+        )}
       </div>
 
       {/* Points */}
       <div className="space-y-2">
         <Label>Points</Label>
         <Input type="number" {...register("points")} placeholder="e.g. 2" />
-        {errors.points && <p className="text-red-500 text-sm">{errors.points.message}</p>}
+        {errors.points && (
+          <p className="text-red-500 text-sm">{errors.points.message}</p>
+        )}
       </div>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Submitting..." : "Submit Question"}
-      </Button>
+      <LoadingButton type="submit" className="w-full" loading={isLoading}>
+        Submit Question
+      </LoadingButton>
     </form>
   );
 }

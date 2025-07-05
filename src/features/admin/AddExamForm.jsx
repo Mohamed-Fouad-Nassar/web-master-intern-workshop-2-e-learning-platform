@@ -1,13 +1,7 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { examSchema } from "@/validations/ExamSchema";
-import { useAddExam } from "@/hooks/admin/exams/useAddExam"; 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
+
 import {
   Select,
   SelectTrigger,
@@ -15,8 +9,16 @@ import {
   SelectContent,
   SelectItem,
 } from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { examSchema } from "@/validations/ExamSchema";
+import LoadingButton from "@/components/LoadingButton";
 
-export default function AddExamForm({ onSuccess }) {
+import { useAddExam } from "@/hooks/admin/exams/useAddExam";
+
+export default function AddExamForm() {
   const {
     register,
     handleSubmit,
@@ -38,32 +40,34 @@ export default function AddExamForm({ onSuccess }) {
 
   const isPublished = watch("isPublished");
 
-const { mutate: addExam, isPending } = useAddExam({ onSuccess });
+  const { mutate: addExam, isPending: isLoading } = useAddExam();
 
-const onSubmit = (formData) => {
-  formData.duration = Number(formData.duration);
+  const onSubmit = (formData) => {
+    formData.duration = Number(formData.duration);
 
-  // convert date strings to ISO if needed
-  if (formData.startDate) formData.startDate = new Date(formData.startDate).toISOString();
-  if (formData.endDate) formData.endDate = new Date(formData.endDate).toISOString();
+    // convert date strings to ISO if needed
+    if (formData.startDate)
+      formData.startDate = new Date(formData.startDate).toISOString();
+    if (formData.endDate)
+      formData.endDate = new Date(formData.endDate).toISOString();
 
-  console.log("Submitting formData:", formData);
-  addExam(formData);
-};
-
+    console.log("Submitting formData:", formData);
+    addExam(formData);
+  };
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-6 bg-white dark:bg-[#1f2937] text-gray-900 dark:text-gray-100 p-6 rounded-xl shadow-md border border-border dark:border-gray-700 max-w-2xl mx-auto"
-    >
-      <h2 className="text-xl font-semibold mb-4">Add New Exam</h2>
-
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
       {/* Title */}
       <div className="space-y-2">
         <Label htmlFor="title">Exam Title</Label>
-        <Input id="title" {...register("title")} placeholder="Enter exam title" />
-        {errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
+        <Input
+          id="title"
+          {...register("title")}
+          placeholder="Enter exam title"
+        />
+        {errors.title && (
+          <p className="text-red-500 text-sm">{errors.title.message}</p>
+        )}
       </div>
 
       {/* Description */}
@@ -82,7 +86,12 @@ const onSubmit = (formData) => {
       {/* Duration */}
       <div className="space-y-2">
         <Label htmlFor="duration">Duration (minutes)</Label>
-        <Input type="number" id="duration" {...register("duration")} placeholder="e.g. 60" />
+        <Input
+          type="number"
+          id="duration"
+          {...register("duration")}
+          placeholder="e.g. 60"
+        />
         {errors.duration && (
           <p className="text-red-500 text-sm">{errors.duration.message}</p>
         )}
@@ -134,9 +143,9 @@ const onSubmit = (formData) => {
         <Label htmlFor="isPublished">Publish Exam</Label>
       </div>
 
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {isPending ? "Submitting..." : "Submit Exam"}
-      </Button>
+      <LoadingButton type="submit" className="w-full" loading={isLoading}>
+        Submit Exam
+      </LoadingButton>
     </form>
   );
 }

@@ -15,11 +15,13 @@ export const questionSchema = z
         ctx.addIssue({
           path: ["options"],
           code: z.ZodIssueCode.custom,
-          message: "All 4 options must be provided for multiple choice questions",
+          message:
+            "All 4 options must be provided for multiple choice questions",
         });
       }
     } else if (data.type === "true-false") {
-      const valid = Array.isArray(data.options) &&
+      const valid =
+        Array.isArray(data.options) &&
         data.options.length === 2 &&
         data.options[0] === "True" &&
         data.options[1] === "False";
@@ -38,4 +40,3 @@ export const questionSchema = z
       });
     }
   });
-

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import dayjs from "dayjs";
-import AddQuestionForm from "@/features/admin/AddQuestionForm";
+import AddQuestionForm from "@/features/admin/questions/AddQuestionForm";
 import { Button } from "@/components/ui/button";
 import { X, Plus } from "lucide-react";
 
@@ -39,18 +39,23 @@ export default function ViewExamDetails({ exam }) {
     };
   }, [showForm]);
 
-  if (!exam) return <p className="text-muted-foreground">No exam data available</p>;
+  if (!exam)
+    return <p className="text-muted-foreground">No exam data available</p>;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto p-6">
+    <div className="space-y-6 max-w-4xl mx-auto">
       {/* Exam Info */}
       <div className="bg-white dark:bg-[#1f2937] rounded-xl p-6 shadow-md border border-border dark:border-gray-700">
         <h2 className="text-2xl font-bold mb-2">{exam.title}</h2>
         <p className="text-muted-foreground mb-4">{exam.description}</p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm text-gray-700 dark:text-gray-300">
-          <p><strong>Class Level:</strong> {exam.classLevel}</p>
-          <p><strong>Duration:</strong> {exam.duration} mins</p>
+          <p>
+            <strong>Class Level:</strong> {exam.classLevel}
+          </p>
+          <p>
+            <strong>Duration:</strong> {exam.duration} mins
+          </p>
           <p>
             <strong>Status:</strong>{" "}
             {exam.isPublished ? (
@@ -59,9 +64,16 @@ export default function ViewExamDetails({ exam }) {
               <Badge className="bg-yellow-500">Draft</Badge>
             )}
           </p>
-          <p><strong>Start:</strong> {dayjs(exam.startDate).format("MMMM D, YYYY")}</p>
-          <p><strong>End:</strong> {dayjs(exam.endDate).format("MMMM D, YYYY")}</p>
-          <p><strong>Total Questions:</strong> {exam.questions.length}</p>
+          <p>
+            <strong>Start:</strong>{" "}
+            {dayjs(exam.startDate).format("MMMM D, YYYY")}
+          </p>
+          <p>
+            <strong>End:</strong> {dayjs(exam.endDate).format("MMMM D, YYYY")}
+          </p>
+          <p>
+            <strong>Total Questions:</strong> {exam.questions.length}
+          </p>
         </div>
       </div>
 
@@ -99,7 +111,9 @@ export default function ViewExamDetails({ exam }) {
                   <li
                     key={i}
                     className={`${
-                      opt === q.correctAnswer ? "font-bold text-green-600 dark:text-green-400" : ""
+                      opt === q.correctAnswer
+                        ? "font-bold text-green-600 dark:text-green-400"
+                        : ""
                     }`}
                   >
                     {opt}
@@ -111,14 +125,18 @@ export default function ViewExamDetails({ exam }) {
             {q.type === "true-false" && (
               <p>
                 <strong>Correct Answer:</strong>{" "}
-                <span className="text-green-600 dark:text-green-400">{q.correctAnswer}</span>
+                <span className="text-green-600 dark:text-green-400">
+                  {q.correctAnswer}
+                </span>
               </p>
             )}
 
             {q.type === "short-answer" && (
               <p>
                 <strong>Expected Answer:</strong>{" "}
-                <span className="italic text-muted-foreground">{q.correctAnswer}</span>
+                <span className="italic text-muted-foreground">
+                  {q.correctAnswer}
+                </span>
               </p>
             )}
           </div>
@@ -144,7 +162,7 @@ export default function ViewExamDetails({ exam }) {
             <AddQuestionForm
               exams={[{ _id: exam._id, title: exam.title }]}
               onSubmit={handleQuestionSubmit}
-              defaultExamId={exam._id} 
+              defaultExamId={exam._id}
             />
           </div>
         </div>
