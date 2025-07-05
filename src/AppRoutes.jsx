@@ -1,6 +1,7 @@
 import { lazy } from "react";
 import { Toaster } from "sonner";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import ShoppingCart from "./pages/ShoppingCart";
 
 const NotFound = lazy(() => import("@/pages/NotFound"));
 const ScrollToTop = lazy(() => import("@/components/ScrollToTop"));
@@ -97,6 +98,14 @@ export default function AppRouter() {
                 <ProtectedLessonRoute>
                   <PaidLesson key={location.pathname} />
                 </ProtectedLessonRoute>
+              </SuspenseFallback>
+            }
+          />
+          <Route
+            path="cart"
+            element={
+              <SuspenseFallback>
+                <ShoppingCart />
               </SuspenseFallback>
             }
           />

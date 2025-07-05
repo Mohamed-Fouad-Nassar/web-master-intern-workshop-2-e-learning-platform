@@ -1,5 +1,5 @@
 import { Link } from "react-router";
-import { ChartPie, LogOut, User } from "lucide-react";
+import { ChartPie, LogOut, ShoppingCart, User } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -40,6 +40,16 @@ export default function UserButton() {
           >
             <User className="size-4 text-inherit" />
             <span>Profile</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem asChild>
+          <Link
+            to="/cart"
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <ShoppingCart className="size-4 text-inherit" />
+            <span>Cart</span>
           </Link>
         </DropdownMenuItem>
 

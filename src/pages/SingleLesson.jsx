@@ -10,6 +10,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router";
 import { payLesson } from "@/services/lessonAPI";
 import MoreCourses from "@/components/MoreCourses";
+import { toast } from "sonner";
 
 const SingleLesson = () => {
   const { id } = useParams();
@@ -43,6 +44,24 @@ const SingleLesson = () => {
     } catch (error) {
       console.error(error);
       setLoading(false);
+    }
+  };
+
+  const handleAddToCart = (lesson) => {
+    if (localStorage.getItem("cart")) {
+      localStorage.setItem(
+        "cart",
+        JSON.stringify([
+          ...JSON.parse(localStorage.getItem("cart")).filter(
+            (item) => item._id !== lesson._id
+          ),
+          lesson,
+        ])
+      );
+      toast.success("Course added to cart");
+    } else {
+      localStorage.setItem("cart", JSON.stringify([lesson]));
+      toast.success("Course added to cart");
     }
   };
 
@@ -111,7 +130,12 @@ const SingleLesson = () => {
               <span className="text-xs text-green-400">50% Off</span>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant={"default"}>Add to Cart</Button>
+              <Button
+                variant={"default"}
+                onClick={() => handleAddToCart(lesson)}
+              >
+                Add to Cart
+              </Button>
               <Button variant={"outline"} onClick={handleClick}>
                 Buy Now
               </Button>
@@ -137,7 +161,11 @@ const SingleLesson = () => {
               <span className="text-green-400">50% Off</span>
             </h1>
             <div className="flex items-center justify-center flex-col gap-3">
-              <Button variant={"default"} className="w-full">
+              <Button
+                variant={"default"}
+                className="w-full"
+                onClick={() => handleAddToCart(lesson)}
+              >
                 Add to Cart
               </Button>
               <Button
@@ -160,7 +188,7 @@ const SingleLesson = () => {
           {sections[3].title}
         </h1>
         <LessonReviews />
-        <MoreCourses id={id}/>
+        <MoreCourses id={id} />
       </div>
     </div>
   );

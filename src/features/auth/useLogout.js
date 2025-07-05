@@ -7,6 +7,7 @@ export default function useLogout() {
 
   const logout = () => {
     localStorage.removeItem("token");
+    localStorage.removeItem("cart");
     queryClient.removeQueries();
     navigate("/auth", { replace: true });
   };
