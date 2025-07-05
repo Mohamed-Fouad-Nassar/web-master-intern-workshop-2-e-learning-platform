@@ -22,8 +22,22 @@ export default function StartExam() {
 
   const fetchExamDetails = async () => {
     try {
-      const data = await examApi.getExamScore(examId);
-      setExamDetails(data.exam || data);
+      let data;
+      try {
+        data = await examApi.getExamDetails(examId);
+      } catch (err) {
+        console.log('Exam details not available, fetching from all exams');
+        const allExams = await examApi.getAllExams();
+        const exams = allExams.data || allExams;
+        const exam = exams.find(e => e._id === examId);
+        if (exam) {
+          data = { data: { exam } };
+        } else {
+          throw new Error('Exam not found');
+        }
+      }
+      const examData = data.data?.exam || data.exam || data;
+      setExamDetails(examData);
       setError(null);
     } catch (err) {
       setError('Failed to load exam details');
@@ -36,9 +50,16 @@ export default function StartExam() {
   const handleStartExam = async () => {
     setIsStarting(true);
     try {
-      await examApi.startExam(examId);
-      toast.success('Exam started successfully!');
-      navigate(`/exam/${examId}`);
+      const response = await examApi.startExam(examId);
+      
+      if (response.success) {
+        toast.success('Exam started successfully!');
+        
+        // Navigate to the exam page 
+        navigate(`/exam/get/${examId}`);
+      } else {
+        throw new Error(response.message || 'Failed to start exam');
+      }
     } catch (err) {
       toast.error('Failed to start exam. Please try again.');
       console.error('Error starting exam:', err);
@@ -100,7 +121,7 @@ export default function StartExam() {
               <div className="flex items-center gap-2">
                 <Users className="h-5 w-5 text-muted-foreground" />
                 <Badge variant="secondary">
-                  {examDetails?.difficulty || 'Standard'}
+                  {examDetails?.difficulty || examDetails?.classLevel || 'Standard'}
                 </Badge>
               </div>
             </div>

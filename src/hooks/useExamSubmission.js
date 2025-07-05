@@ -11,22 +11,28 @@ export function useExamSubmission(examId, onSuccess) {
     onMutate: () => setIsSubmitting(true),
     onSuccess: (data) => {
       setIsSubmitting(false);
-      toast.success('Exam submitted successfully!');
-      onSuccess?.(data);
+
+      if (data.success) {
+        toast.success(data.message || 'Exam submitted successfully!');
+        onSuccess?.(data);
+      } else {
+        toast.error(data.message || 'Failed to submit exam');
+      }
     },
     onError: (error) => {
       setIsSubmitting(false);
-      toast.error('Failed to submit exam. Please try again.');
+      const errorMessage = error.response?.data?.message || 'Failed to submit exam. Please try again.';
+      toast.error(errorMessage);
       console.error('Submission error:', error);
     },
   });
 
   const submitExam = (answers) => {
-    // Format answers for API
-    const formattedAnswers = Object.entries(answers).map(([questionId, selectedAnswer]) => ({
-      questionId,
-      selectedAnswer
-    }));
+    const formattedAnswers = Array.isArray(answers) ? answers : 
+      Object.entries(answers).map(([questionId, selectedAnswer]) => ({
+        questionId,
+        selectedAnswer
+      }));
 
     mutation.mutate(formattedAnswers);
   };
@@ -34,6 +40,8 @@ export function useExamSubmission(examId, onSuccess) {
   return {
     submitExam,
     isSubmitting,
-    error: mutation.error
+    error: mutation.error,
+    isSuccess: mutation.isSuccess,
+    data: mutation.data
   };
 }

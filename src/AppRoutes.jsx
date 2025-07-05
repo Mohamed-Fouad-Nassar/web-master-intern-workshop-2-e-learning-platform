@@ -30,6 +30,7 @@ const TakeExam = lazy(() => import("@/pages/TakeExam"));
 const StartExam = lazy(() => import("@/pages/StartExam"));
 const PaidLesson = lazy(() => import("@/pages/PaidLesson"));
 const ExamResults = lazy(() => import("@/pages/ExamResults"));
+const Exams = lazy(() => import("@/pages/Exams"));
 const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
 
 const DashboardHome = lazy(() => import("@/pages/DashboardHome"));
@@ -242,6 +243,92 @@ export default function AppRouter() {
               </SuspenseFallback>
             }
           />
+          {/* <Route path="settings" element={<div>Profile Settings</div>} /> */}
+        </Route>
+
+        {/* Exam Routes */}
+        <Route
+          path="/studentExam/start/:examId"
+          element={
+            <SuspenseFallback>
+              <StartExam />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="/exam/get/:examId"
+          element={
+            <SuspenseFallback>
+              <TakeExam />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="/studentExam/exams/score/:examId"
+          element={
+            <SuspenseFallback>
+              <ExamResults />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="/exam"
+          element={
+            <SuspenseFallback>
+              <Exams />
+            </SuspenseFallback>
+          }
+        />
+
+        {/* Dashboard Layout */}
+        <Route
+          path="/dashboard"
+          element={
+            <SuspenseFallback>
+              <DashboardLayout />
+            </SuspenseFallback>
+          }
+        >
+                <Route
+                  index
+                  element={
+                    <SuspenseFallback>
+                      <DashboardHome />
+                    </SuspenseFallback>
+                  }
+                />
+                <Route
+          path="lessons"
+          element={
+            <SuspenseFallback>
+              <DashLessons />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="exams"
+          element={
+            <SuspenseFallback>
+              <DashExams />
+            </SuspenseFallback>
+          }
+        />
+        <Route
+          path="students"
+          element={
+            <SuspenseFallback>
+              <DashStudents />
+            </SuspenseFallback>
+          }
+        />
+         <Route
+          path="questions"
+          element={
+            <SuspenseFallback>
+              <DashQuestions />
+            </SuspenseFallback>
+          }
+        />
           {/* <Route path="settings" element={<DashboardSettings />} /> */}
         </Route>
 

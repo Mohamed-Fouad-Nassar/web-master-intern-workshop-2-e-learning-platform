@@ -18,7 +18,10 @@ export function useExamAnswers(questions = []) {
 
   // Check if all questions are answered
   const isComplete = useCallback(() => {
-    return questions.every(question => answers[question.id]);
+    return questions.every(question => {
+      const questionId = question._id || question.id;
+      return answers[questionId];
+    });
   }, [questions, answers]);
 
   // Get progress stats
@@ -40,12 +43,20 @@ export function useExamAnswers(questions = []) {
     setAnswers({});
   }, []);
 
+  const getAnswersForSubmission = useCallback(() => {
+    return Object.entries(answers).map(([questionId, selectedAnswer]) => ({
+      questionId,
+      selectedAnswer
+    }));
+  }, [answers]);
+
   return {
     answers,
     setAnswer,
     getAnswer,
     isComplete,
     getProgress,
-    clearAnswers
+    clearAnswers,
+    getAnswersForSubmission
   };
 }

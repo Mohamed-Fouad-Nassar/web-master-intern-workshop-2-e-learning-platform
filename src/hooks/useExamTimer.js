@@ -11,6 +11,21 @@ export function useExamTimer(examId) {
   const retryCountRef = useRef(0);
   const maxRetries = 3;
 
+  // Convert API response to total seconds
+  const convertToSeconds = (timeData) => {
+    if (typeof timeData === 'number') {
+      return timeData; // Already in seconds
+    }
+    
+    if (timeData && typeof timeData === 'object') {
+      const minutes = timeData.minutes || 0;
+      const seconds = timeData.seconds || 0;
+      return (minutes * 60) + seconds;
+    }
+    
+    return 0;
+  };
+
   // Fetch remaining time from API with error handling
   const fetchRemainingTime = async (isRetry = false) => {
     try {
@@ -19,7 +34,10 @@ export function useExamTimer(examId) {
       }
       
       const response = await examApi.getRemainingTime(examId);
-      const remaining = response.remainingTime || response.data?.remainingTime || 0;
+      
+      // Handle the nested response structure
+      const timeData = response.data?.remainingTime || response.remainingTime;
+      const remaining = convertToSeconds(timeData);
       
       setTimeRemaining(remaining);
       setIsLoading(false);

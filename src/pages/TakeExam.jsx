@@ -15,6 +15,7 @@ import { toast } from 'sonner';
 export default function TakeExam() {
   const { examId } = useParams();
   const navigate = useNavigate();
+  const [examData, setExamData] = useState(null);
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -32,9 +33,16 @@ export default function TakeExam() {
 
   const fetchExamData = async () => {
     try {
-      const data = await examApi.getExamScore(examId);
-      setQuestions(data.questions || []);
-      setError(null);
+      const response = await examApi.getExamData(examId);
+      
+      if (response.success && response.data) {
+        const exam = response.data;
+        setExamData(exam);
+        setQuestions(exam.questions || []);
+        setError(null);
+      } else {
+        throw new Error(response.message || 'Failed to fetch exam data');
+      }
     } catch (err) {
       setError('Failed to load exam questions');
       console.error('Error fetching exam:', err);
@@ -45,7 +53,7 @@ export default function TakeExam() {
 
   const handleAnswerSelect = (selectedAnswer) => {
     const currentQuestion = questions[currentQuestionIndex];
-    setAnswer(currentQuestion.id, selectedAnswer);
+    setAnswer(currentQuestion.id || currentQuestion._id, selectedAnswer);
   };
 
   const handleNext = () => {
@@ -71,6 +79,12 @@ export default function TakeExam() {
   const confirmSubmit = () => {
     submitExam(answers);
     setShowSubmitConfirm(false);
+  };
+
+  const handleTimeUp = () => {
+    // Auto-submit when time is up
+    toast.warning('Time is up! Submitting your exam...');
+    submitExam(answers);
   };
 
   if (isLoading) {
@@ -99,7 +113,9 @@ export default function TakeExam() {
       <div className="container mx-auto px-4 py-8">
         <Alert className="max-w-2xl mx-auto">
           <AlertTriangle className="h-4 w-4" />
-          <AlertDescription>No questions found for this exam.</AlertDescription>
+          <AlertDescription>
+            No questions found for this exam. Please contact your instructor.
+          </AlertDescription>
         </Alert>
       </div>
     );
@@ -111,15 +127,27 @@ export default function TakeExam() {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-6xl mx-auto space-y-6">
+        {/* Exam Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold">{examData?.title || 'Exam'}</h1>
+          {examData?.description && (
+            <p className="text-muted-foreground">{examData.description}</p>
+          )}
+        </div>
+
         {/* Timer */}
-        <ExamTimer examId={examId} />
+        <ExamTimer 
+          examId={examId} 
+          duration={examData?.duration || 60}
+          onTimeUp={handleTimeUp}
+        />
 
         {/* Question */}
         <QuestionCard
           question={currentQuestion}
           questionNumber={currentQuestionIndex + 1}
           totalQuestions={questions.length}
-          selectedAnswer={getAnswer(currentQuestion.id)}
+          selectedAnswer={getAnswer(currentQuestion.id || currentQuestion._id)}
           onAnswerSelect={handleAnswerSelect}
         />
 
