@@ -77,7 +77,7 @@ export default function LessonsTable({ lessons = [] }) {
                   </TableCell>
                   <TableCell className="text-center space-x-2">
                     <ViewLessonModal lesson={lesson} />
-                    <LessonModalFrom use="Edit" id={lesson?._id} />
+                    <LessonModalFrom use="Edit" id={lesson?._id} paginatedLessons={paginatedLessons}/>
                     <DeleteLessonModal lessonId={lesson?._id} />
                   </TableCell>
                 </TableRow>

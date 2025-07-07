@@ -34,6 +34,13 @@ function PaidLesson() {
     { id: "course", title: "Course" },
     { id: "reviews", title: "Reviews" },
   ];
+
+  const extractVideoId = (url) => {
+    if (!url) return "";
+    const match = url.match(/(?:youtu\.be\/|v=)([^&]+)/);
+    return match ? match[1] : "";
+  };
+
   return (
     <div>
       <div className="container mx-auto px-4 py-8">
@@ -42,7 +49,9 @@ function PaidLesson() {
           <div className="w-full lg:w-2/3 flex flex-col gap-6">
             <div className="w-full aspect-video">
               <iframe
-                src={data?.video}
+                src={`https://www.youtube.com/embed/${extractVideoId(
+                  data?.video
+                )}`}
                 title="YouTube video player"
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
